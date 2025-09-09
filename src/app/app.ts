@@ -36,21 +36,5 @@ export class App implements OnInit{
       }
     });
   }
-  
-// jsonData: any; // Pour stocker le JSON brut
-
-// ngOnInit(): void {
-//   this.apiService.getDoctors().subscribe({
-//     next: (data) => {
-//       this.jsonData = data;
-//       console.log('Données reçues :', data); // Pour debug dans la console
-//     },
-//     error: (err) => {
-//       console.error('Erreur API :', err);
-//     }
-//   });
-// }
-
-
 }
 
