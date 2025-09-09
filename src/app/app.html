@@ -1,7 +1,13 @@
-<h1 class ='rdvmedic'>
-  rdv_medic {{test}}
-</h1>
+<h2>Liste des médecins</h2>
+<!-- <app-root></app-root> -->
 
-<!-- Ajout pour afficher les données récupérées via l'API -->
-<h2>Données reçues :</h2>
-<pre>{{ data()}}</pre>
+
+<!-- Liste des médecins -->
+<ul *ngIf="!loading && !errorMessage">
+  <li *ngFor="let medecin of doctors">
+    <strong>{{ medecin.firstName }} {{ medecin.lastName }}</strong> - {{ medecin.speciality }}
+  </li>
+
+
+
+<!-- <pre>{{ jsonData }}</pre> -->

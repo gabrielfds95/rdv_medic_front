@@ -1,43 +1,56 @@
 // Importation des décorateurs et outils Angular
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 // Importation du composant de routage (utile si tu utilises des routes)
-import { RouterOutlet } from '@angular/router';
+//import { RouterOutlet } from '@angular/router';
 // Importation de ton service API (adapte le chemin si nécessaire)
-import { ApiService } from './api.service.spec';
+import { ApiService } from './services/api.service';
+import { Doctor } from './Doctor/doctor.model';
+import { NgIf, NgFor } from '@angular/common'; 
 
 @Component({
   selector: 'app-root', // Nom du composant utilisé dans le HTML
-  standalone: true,     // Indique que ce composant est standalone (pas dans un module)
-  //imports: [RouterOutlet], // Importation des composants nécessaires (ici le routeur)
+  standalone: true,     // Indique que ce composant est standalone (pas besoin d'etre dans un module)
+  imports: [NgIf,NgFor], // Importation des composants nécessaires (ici le routeur)
   templateUrl: './app.html', // Fichier HTML associé au composant
   styleUrl: './app.scss'     // Fichier SCSS associé au composant
 })
-export class App {
-  // Création d’un signal pour le titre (réactif)
-  protected readonly title = signal('rdv_medic_front');
+export class App implements OnInit{
+  
+  doctors: Doctor[] = [];      // Liste des médecins à afficher
+  loading: boolean = true;       // Indicateur de chargement
+  errorMessage: string = '';     // Message d'erreur éventuel
 
-  // Variable simple pour afficher un texte
-  test = 'prise de rdv medical';
+  constructor(private apiService: ApiService) {}
 
-  // Injection du service API via la fonction `inject`
-  private apiService = inject(ApiService);
-
-  // Signal pour stocker les données récupérées via l’API
-  data = signal<any>(null);
-
-  // Le constructeur est appelé à la création du composant
-  constructor() {
-    // Appel de la méthode `getData()` du service
-    this.apiService.getData().subscribe({
-      next: (res: any) => {
-        // En cas de succès, on stocke les données dans le signal
-        this.data.set(res);
-        console.log('Données reçues :', res);
+  // Appel de l'API dès le chargement du composant
+  ngOnInit(): void {
+    this.apiService.getDoctors().subscribe({
+      next: (data) => {
+        this.doctors = data;
+        this.loading = false;
       },
-      error: (err: any) => {
-        // En cas d’erreur, on affiche un message dans la console
-        console.error('Erreur lors du GET :', err);
+      error: (err) => {
+        this.errorMessage = 'Erreur lors du chargement des médecins';
+        console.error(err);
+        this.loading = false;
       }
     });
   }
+  
+// jsonData: any; // Pour stocker le JSON brut
+
+// ngOnInit(): void {
+//   this.apiService.getDoctors().subscribe({
+//     next: (data) => {
+//       this.jsonData = data;
+//       console.log('Données reçues :', data); // Pour debug dans la console
+//     },
+//     error: (err) => {
+//       console.error('Erreur API :', err);
+//     }
+//   });
+// }
+
+
 }
+
