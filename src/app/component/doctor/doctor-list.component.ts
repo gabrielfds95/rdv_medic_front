@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 // Importation de ton service API (adapte le chemin si nécessaire)
 import { ApiService } from '../../services/api.service';  // adapte le chemin si besoin
 import { Doctor } from '../../model/doctor.model';
-import { NgIf, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
+// import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-doctor-list',// Nom du composant utilisé dans le HTML
   standalone: true, // Indique que ce composant est standalone (pas besoin d'etre dans un module)
-  imports: [NgIf, NgFor], // Importation des composants nécessaires (ici pour les directives structurelles)
+  imports: [CommonModule], // Importation des composants nécessaires (ici pour les directives structurelles)
   templateUrl: './doctor-list.component.html', // Fichier HTML associé au composant
   styleUrls: ['./doctor-list.component.scss']     // Fichier SCSS associé au composant
 })

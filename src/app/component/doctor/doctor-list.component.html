@@ -1,12 +1,29 @@
 <!-- Liste des médecins -->
-<ul *ngIf="!loading && !errorMessage">
-  <li *ngFor="let medecin of doctors" (click)="goToDoctorSlots(medecin)">
+<!-- Liste des médecins -->
+
+@if (!loading && !errorMessage) {
+<ul>
+
+  @for (medecin of doctors; track medecin.id) {
+  <li (click)="goToDoctorSlots(medecin)">
     <strong>{{ medecin.firstName }} {{ medecin.lastName }}</strong> - {{ medecin.speciality }}
   </li>
+
+  }
 </ul>
 
+}
+
 <!-- Indicateur de chargement -->
-<div *ngIf="loading" class="loading">Chargement des données...</div>
+
+@if (loading) {
+<div class="loading">Chargement des données...</div>
+
+}
 
 <!-- Message d'erreur -->
-<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+@if (errorMessage) {
+<div class="error">{{ errorMessage }}</div>
+
+}
