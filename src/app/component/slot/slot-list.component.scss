@@ -1,0 +1,17 @@
+.error {
+  color: red;
+}
+
+.slot-button {
+  padding: 8px 12px;
+  margin: 5px 0;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.slot-button:hover {
+  background-color: #45a049;
+}

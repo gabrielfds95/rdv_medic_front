@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 // Importation du composant de routage (utile si tu utilises des routes)
 import { Router } from '@angular/router';
 // Importation de ton service API (adapte le chemin si nécessaire)
-import { ApiService } from '../services/api.service';  // adapte le chemin si besoin
-import { Doctor } from './doctor.model';
+import { ApiService } from '../../services/api.service';  // adapte le chemin si besoin
+import { Doctor } from '../../model/doctor.model';
 import { NgIf, NgFor } from '@angular/common';
 
 @Component({

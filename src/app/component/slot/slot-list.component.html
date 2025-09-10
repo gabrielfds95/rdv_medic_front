@@ -1,0 +1,11 @@
+<h2>Créneaux du médecin</h2>
+
+<div *ngIf="loading">Chargement des créneaux...</div>
+
+<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+<ul *ngIf="!loading && !errorMessage">
+  <li *ngFor="let slot of slots" class="slot-button">
+    {{ slot.slotDate }} {{ slot.slotTime }}
+  </li>
+</ul>
