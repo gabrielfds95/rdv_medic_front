@@ -1,17 +1,2 @@
 <h2>Liste des médecins</h2>
-<!-- <app-root></app-root> -->
-
-
-<!-- Indicateur de chargement -->
-<div *ngIf="loading">Chargement des données...</div>
-
-<!-- Message d'erreur -->
-<div *ngIf="errorMessage" style="color: red;">
-  {{ errorMessage }}
-</div>
-
-<!-- Liste des médecins -->
-<ul *ngIf="!loading && !errorMessage">
-  <li *ngFor="let medecin of doctors">
-    <strong>{{ medecin.firstName }} {{ medecin.lastName }}</strong> - {{ medecin.speciality }}
-  </li>
+<app-doctor-list></app-doctor-list>
