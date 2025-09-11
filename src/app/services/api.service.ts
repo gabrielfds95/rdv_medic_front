@@ -18,8 +18,12 @@ export class ApiService {
   }
 
   getSlotsByDoctors(idDoctor: number): Observable<Slot[]>{
-    return this.http.get<Slot[]>('http://localhost:9000/doctors/{idDoctor}/slots')
+    return this.http.get<Slot[]>('http://localhost:9000/doctors/${idDoctor}/slots')
   }
+
+getSlotsByDoctorsAndPatient(idDoctor: number, idPatient: number): Observable<Slot[]> {
+  return this.http.get<Slot[]>(`http://localhost:9000/slots/${idDoctor}/${idPatient}`);
+}
 
 }
 

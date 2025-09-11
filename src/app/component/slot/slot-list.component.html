@@ -1,11 +1,47 @@
-<h2>Créneaux du médecin</h2>
+<h2>Créneaux du docteur </h2>
 
-<div *ngIf="loading">Chargement des créneaux...</div>
+<div class="calendar-container">
+  @if (!loading && !errorMessage) {
 
-<div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <!-- Navigation entre les semaines -->
+    <div class="week-navigation">
+      <button (click)="previousWeek()">← Semaine précédente</button>
+      <span>Semaine du {{ currentWeekStart | date: 'dd/MM/yyyy' }}</span>
+      <button (click)="nextWeek()">Semaine suivante →</button>
+    </div>
 
-<ul *ngIf="!loading && !errorMessage">
-  <li *ngFor="let slot of slots" class="slot-button">
-    {{ slot.slotDate }} {{ slot.slotTime }}
-  </li>
-</ul>
+    <!-- Grille du calendrier -->
+    <div class="calendar-grid">
+
+      <!-- En-tête : jours de la semaine -->
+      <div class="grid-header">
+        <div class="time-cell"></div> <!-- Cellule vide en haut à gauche -->
+        @for (day of weekDays; track day) {
+          <div class="day-cell">
+            <strong>{{ day | date: 'EEEE' }}</strong><br>
+            <span>{{ day | date: 'dd/MM/yyyy' }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Corps du calendrier : heures + créneaux -->
+      @for (hour of hours; track hour) {
+        <div class="grid-row">
+          <!-- Colonne des heures -->
+          <div class="time-cell">{{ hour }}</div>
+
+          <!-- Créneaux pour chaque jour à cette heure -->
+          @for (day of weekDays; track day) {
+            <button
+              class="slot-cell"
+              [disabled]="isSlotTaken(day, hour)"
+              [class.taken]="isSlotTaken(day, hour)"
+              (click)="openForm(day, hour)">
+              {{ isSlotTaken(day, hour) ? 'Réservé' : 'Libre' }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
