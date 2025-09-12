@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'; // Pour récupérer les paramètres de l'URL
 import { ApiService } from '../../services/api.service'; // Ton service pour appeler l'API backend
 import { Slot } from '../../model/slot.model'; // Le modèle de données pour les créneaux
+import { Doctor } from '../../model/doctor.model';
+
 
 // Import des directives Angular standalone pour utiliser @if, @for, pipes, etc.
 import {CommonModule,DatePipe} from '@angular/common';
@@ -32,6 +34,9 @@ export class SlotListComponent implements OnInit {
   // Date du lundi de la semaine affichée
   currentWeekStart: Date = this.getMonday(new Date());
 
+  //nom dcoteur
+  doctorLastName!: Doctor;
+
   // Liste des jours de la semaine (lundi à vendredi)
   weekDays: Date[] = [];
 
@@ -48,6 +53,13 @@ export class SlotListComponent implements OnInit {
   ngOnInit(): void {
     // Récupère l'ID du médecin depuis l'URL
     this.doctorId = Number(this.route.snapshot.paramMap.get('id'));
+
+    //recupere info medecin
+    this.apiService.getDoctorById(this.doctorId).subscribe((doctor: Doctor) => {
+      this.doctorLastName = doctor;
+
+    });
+
 
     // Génère les heures de la journée
     this.generateHours();
@@ -83,8 +95,8 @@ export class SlotListComponent implements OnInit {
     const startHour = 8;
     const endHour = 18;
     for (let hour = startHour; hour < endHour; hour++) {
-      this.hours.push(`${this.pad(hour)}:00`);
-      this.hours.push(`${this.pad(hour)}:30`);
+      this.hours.push(`${this.pad(hour)}:00.00`);
+      this.hours.push(`${this.pad(hour)}:30.00`);
     }
   }
 
@@ -100,6 +112,7 @@ export class SlotListComponent implements OnInit {
       next: (slots) => {
         this.takenSlots = slots; // Stocke les créneaux récupérés
         this.loading = false;
+        console.log(slots);
       },
       error: (err) => {
         console.error('Erreur lors du chargement des créneaux :', err);

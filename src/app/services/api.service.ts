@@ -19,12 +19,17 @@ export class ApiService {
   }
 
   getSlotsByDoctors(idDoctor: number): Observable<Slot[]>{
-    return this.http.get<Slot[]>(this.lien +'/doctors/${idDoctor}/slots')
+    return this.http.get<Slot[]>(this.lien +'/doctors/${idDoctor}/slots');
   }
 
 getSlotsByDoctorsAndPatient(idDoctor: number, idPatient: number): Observable<Slot[]> {
   return this.http.get<Slot[]>(this.lien +`/slots/${idDoctor}/${idPatient}`);
 }
+
+getDoctorById(idDoctor: number): Observable<Doctor> {
+  return this.http.get<Doctor>(this.lien +`/doctor/${idDoctor}`);
+}
+
 
 }
 

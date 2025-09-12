@@ -1,4 +1,6 @@
-<h2>Créneaux du docteur </h2>
+@if (doctorLastName){
+  <h2>Créneaux du docteur {{ doctorLastName.lastName }}</h2>
+}
 
 <div class="calendar-container">
   @if (!loading && !errorMessage) {
