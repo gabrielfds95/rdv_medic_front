@@ -11,18 +11,19 @@ export class ApiService {
 
   constructor(private http: HttpClient) {} // Injection du client HTTP
 
+  lien = 'http://localhost:9000';
 
   // Méthode GET pour récupérer la liste des médecins
   getDoctors(): Observable<Doctor[]> {
-    return this.http.get<Doctor[]>('http://localhost:9000/doctors');
+    return this.http.get<Doctor[]>(this.lien +'/doctors');
   }
 
   getSlotsByDoctors(idDoctor: number): Observable<Slot[]>{
-    return this.http.get<Slot[]>('http://localhost:9000/doctors/${idDoctor}/slots')
+    return this.http.get<Slot[]>(this.lien +'/doctors/${idDoctor}/slots')
   }
 
 getSlotsByDoctorsAndPatient(idDoctor: number, idPatient: number): Observable<Slot[]> {
-  return this.http.get<Slot[]>(`http://localhost:9000/slots/${idDoctor}/${idPatient}`);
+  return this.http.get<Slot[]>(this.lien +`/slots/${idDoctor}/${idPatient}`);
 }
 
 }
