@@ -18,24 +18,24 @@ import {CommonModule,DatePipe} from '@angular/common';
   styleUrls: ['./slot-list.component.scss'] // Fichier de styles associé
 })
 export class SlotListComponent implements OnInit {
-  // ID du médecin récupéré depuis l'URL
+  // ID du médecin récupéré depuis l'URL ! indique qu'elle sera initialisée plus tard
   doctorId!: number;
 
   // ID du patient (temporaire, à remplacer plus tard par une vraie logique)
   patientId: number = 1;
 
-  // Liste des créneaux déjà pris
+  // Liste tableau des créneaux déjà pris depuis le backend
   takenSlots: Slot[] = [];
 
   // Pour gérer l'affichage conditionnel
   loading = false;
   errorMessage = '';
 
-  // Date du lundi de la semaine affichée
+  // Initialise la semaine affichée à partir du lundi de la semaine actuelle.
   currentWeekStart: Date = this.getMonday(new Date());
 
-  //nom dcoteur
-  doctorLastName!: Doctor;
+  //nom docteur
+  selectedDoctor!: Doctor;
 
   // Liste des jours de la semaine (lundi à vendredi)
   weekDays: Date[] = [];
@@ -51,12 +51,12 @@ export class SlotListComponent implements OnInit {
 
   // Méthode appelée à l'initialisation du composant
   ngOnInit(): void {
-    // Récupère l'ID du médecin depuis l'URL
+    // Récupère l'ID du médecin depuis l'URL et le convertit en nombre
     this.doctorId = Number(this.route.snapshot.paramMap.get('id'));
 
-    //recupere info medecin
+    //Appelle l’API pour récupérer les infos du médecin et les stocke dans selectedDoctor
     this.apiService.getDoctorById(this.doctorId).subscribe((doctor: Doctor) => {
-      this.doctorLastName = doctor;
+      this.selectedDoctor = doctor;
 
     });
 
@@ -91,21 +91,21 @@ export class SlotListComponent implements OnInit {
   }
 
   // Génère les heures de la journée toutes les 30 minutes entre 8h et 18h
-  generateHours(): void {
-    const startHour = 8;
-    const endHour = 18;
-    for (let hour = startHour; hour < endHour; hour++) {
-      this.hours.push(`${this.pad(hour)}:00.00`);
-      this.hours.push(`${this.pad(hour)}:30.00`);
-    }
+generateHours(): void {
+  const startHour = 8;
+  const endHour = 18;
+  for (let hour = startHour; hour < endHour; hour++) {
+    this.hours.push(`${this.pad(hour)}:00`);
+    this.hours.push(`${this.pad(hour)}:30`);
   }
+}
 
   // Ajoute un zéro devant les heures < 10 (ex : 08 au lieu de 8)
   pad(n: number): string {
     return n < 10 ? '0' + n : n.toString();
   }
 
-  // Charge les créneaux déjà pris pour le médecin et le patient
+  // Appelle l’API pour récupérer les créneaux réservés, gère l’état de chargement et les erreurs.
   loadTakenSlots(): void {
     this.loading = true;
     this.apiService.getSlotsByDoctorsAndPatient(this.doctorId, this.patientId).subscribe({
@@ -123,15 +123,15 @@ export class SlotListComponent implements OnInit {
   }
 
   // Vérifie si un créneau est déjà pris (même date et même heure)
-  isSlotTaken(date: Date, time: string): boolean {
-    return this.takenSlots.some(slot => {
-      const slotDate = new Date(slot.slotDate);
-      return (
-        slotDate.toDateString() === date.toDateString() &&
-        slot.slotTime === time
-      );
-    });
-  }
+isSlotTaken(date: Date, time: string): boolean {
+  const dateStr = date.toISOString().split('T')[0];
+  return this.takenSlots.some(slot => {
+    const slotDateStr = new Date(slot.slotDate).toISOString().split('T')[0];
+    const slotTimeStr = slot.slotTime.slice(0, 5); // '14:30'
+    return slotDateStr === dateStr && slotTimeStr === time;
+  });
+}
+
 
   // Passe à la semaine précédente
   previousWeek(): void {
