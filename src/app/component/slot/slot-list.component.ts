@@ -147,9 +147,37 @@ isSlotTaken(date: Date, time: string): boolean {
     this.loadTakenSlots();
   }
 
-  // Méthode appelée quand on clique sur un créneau (à compléter plus tard)
-  openForm(day: Date, hour: string): void {
-    console.log(`Créneau sélectionné : ${day.toDateString()} à ${hour}`);
-    // Tu pourras ouvrir un formulaire ici plus tard
-  }
+  // Méthode appelée quand on clique sur un créneau 
+  // Affichant la date et l'heure du créneaux choisis avec un formulaire demandait nom prenom du patient etc etc
+  // Appeler post slot et aussi post patient 
+
+  
+  selectedSlot: { day: Date; hour: string } | null = null;
+formData = {
+  lastName: '',
+  firstName: '',
+  email: ''
+};
+confirmationMessage: string | null = null;
+
+openForm(day: Date, hour: string): void {
+  console.log('openForm déclenché', day, hour); 
+  this.selectedSlot = { day, hour };
+  this.confirmationMessage = null;
+}
+
+closeForm(): void {
+  this.selectedSlot = null;
+  this.formData = { lastName: '', firstName: '', email: '' };
+}
+
+submitForm(): void {
+  console.log('Formulaire soumis :', this.formData);
+  console.log(`Créneau réservé : ${this.selectedSlot?.day.toDateString()} à ${this.selectedSlot?.hour}`);
+
+  // Ici tu pourrais appeler postSlot et postPatient
+  this.confirmationMessage = 'Réservation confirmée !';
+  this.closeForm();
+}
+
 }

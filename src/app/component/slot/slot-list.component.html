@@ -44,6 +44,39 @@
           }
         </div>
       }
+@if (selectedSlot) {
+  <div class="modal-overlay">
+    <div class="modal-form">
+      <button class="close-button" (click)="closeForm()">×</button>
+      <h3>Réservation pour le {{ selectedSlot.day.toDateString() }} à {{ selectedSlot.hour }}</h3>
+      <form (submit)="submitForm()">
+        <label>
+          Nom:
+          <input type="text"
+                 [value]="formData.lastName"
+                 (input)="formData.lastName = $event.target.value"
+                 required />
+        </label>
+        <label>
+          Prénom:
+          <input type="text"
+                 [value]="formData.firstName"
+                 (input)="formData.firstName = $event.target.value"
+                 required />
+        </label>
+        <label>
+          Email:
+          <input type="email"
+                 [value]="formData.email"
+                 (input)="formData.email = $event.target.value"
+                 required />
+        </label>
+
+        <button type="submit" class="submit-button">Valider</button>
+      </form>
+    </div>
+  </div>
+}
     </div>
   }
 </div>
