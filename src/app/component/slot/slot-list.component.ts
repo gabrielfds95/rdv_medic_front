@@ -209,7 +209,7 @@ submitForm(event: Event): void {
     next: (createdPatient) => {
       const patientId = createdPatient.id;
 
-      // Création de l'objet slot à envoyer
+      // Création de l'objet slotData 
       const slotData = {
         doctorId: this.doctorId,
         patientId: patientId,
@@ -218,7 +218,10 @@ submitForm(event: Event): void {
         slotReason: this.formData.slotReason
       };
 
-      // Appel à l'API pour créer le créneau
+      //Si le créneau est bien créé :
+      // on affiche un message de confirmation
+      // on recharge les créneaux pour mettre à jour l’état visuel
+      // on ferme le formulaire après 2 secondes
       this.apiService.postNewSlot(slotData).subscribe({
         next: () => {
           this.confirmationMessage = 'Réservation confirmée !';
