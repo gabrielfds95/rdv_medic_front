@@ -22,7 +22,7 @@ export class SlotListComponent implements OnInit {
   doctorId!: number;
 
   // ID du patient (temporaire, à remplacer plus tard par une vraie logique)
-  patientId: number = 1;
+ // patientId: number = 2;
 
   // Liste tableau des créneaux déjà pris depuis le backend
   takenSlots: Slot[] = [];
@@ -108,7 +108,7 @@ generateHours(): void {
   // Appelle l’API pour récupérer les créneaux réservés, gère l’état de chargement et les erreurs.
   loadTakenSlots(): void {
     this.loading = true;
-    this.apiService.getSlotsByDoctorsAndPatient(this.doctorId, this.patientId).subscribe({
+    this.apiService.getSlotsByDoctors(this.doctorId).subscribe({
       next: (slots) => {
         this.takenSlots = slots; // Stocke les créneaux récupérés
         this.loading = false;
@@ -147,37 +147,101 @@ isSlotTaken(date: Date, time: string): boolean {
     this.loadTakenSlots();
   }
 
+
   // Méthode appelée quand on clique sur un créneau 
   // Affichant la date et l'heure du créneaux choisis avec un formulaire demandait nom prenom du patient etc etc
   // Appeler post slot et aussi post patient 
 
+// Stocke le créneau sélectionné (jour + heure) ou null si aucun n'est sélectionné
+
+selectedSlot: { day: Date; hour: string } | null = null;
+
   
-  selectedSlot: { day: Date; hour: string } | null = null;
+// Données du formulaire à remplir par l'utilisateur (nom, prénom, email)
 formData = {
   lastName: '',
   firstName: '',
-  email: ''
+  email: '',
+  age: '',
+  slotReason: '' 
 };
+
+
+// Message de confirmation affiché après soumission du formulaire
 confirmationMessage: string | null = null;
 
+
+//appelé lors du clic sur créneau libre
 openForm(day: Date, hour: string): void {
-  console.log('openForm déclenché', day, hour); 
+
+  // Enregistre le créneau sélectionné pour afficher le formulaire
   this.selectedSlot = { day, hour };
+
+  // Réinitialise le message de confirmation (au cas où il était affiché)
   this.confirmationMessage = null;
 }
 
 closeForm(): void {
+  // Réinitialise le créneau sélectionné (ferme le formulaire)
   this.selectedSlot = null;
-  this.formData = { lastName: '', firstName: '', email: '' };
+
+// Vide les champs du formulaire
+  this.formData = { lastName: '', firstName: '', email: '', age: '', slotReason: '' };
 }
 
-submitForm(): void {
-  console.log('Formulaire soumis :', this.formData);
-  console.log(`Créneau réservé : ${this.selectedSlot?.day.toDateString()} à ${this.selectedSlot?.hour}`);
 
-  // Ici tu pourrais appeler postSlot et postPatient
-  this.confirmationMessage = 'Réservation confirmée !';
-  this.closeForm();
+submitForm(event: Event): void {
+  // évite que le formulaire recharge la page ou change d’URL lors de la soumission.
+  event.preventDefault();
+
+  //extrait les données du formulaire et on les met dans un objet patientData.
+  //age est converti en nombre avec Number() car champs html renvoie en string
+  const patientData = {
+    firstName: this.formData.firstName,
+    lastName: this.formData.lastName,
+    email: this.formData.email,
+    age: Number(this.formData.age)
+  };
+
+  // Utilisation du service Angular pour envoyer données au backend
+  //Si la création réussit, on récupère l’id du patient retourné par l’API.
+  this.apiService.postPatient(patientData).subscribe({
+    next: (createdPatient) => {
+      const patientId = createdPatient.id;
+
+      // Création de l'objet slot à envoyer
+      const slotData = {
+        doctorId: this.doctorId,
+        patientId: patientId,
+        slotDate: this.selectedSlot!.day.toISOString().split('T')[0], // format 'YYYY-MM-DD'
+        slotTime: this.selectedSlot!.hour, // format 'HH:mm'
+        slotReason: this.formData.slotReason
+      };
+
+      // Appel à l'API pour créer le créneau
+      this.apiService.postNewSlot(slotData).subscribe({
+        next: () => {
+          this.confirmationMessage = 'Réservation confirmée !';
+          this.loadTakenSlots(); // Recharge les créneaux pour mettre à jour l'affichage
+
+          setTimeout(() => {
+            this.closeForm();
+          }, 2000);
+        },
+        error: (err) => {
+          console.error('Erreur lors de la création du créneau :', err);
+          this.confirmationMessage = 'Erreur lors de la réservation du créneau.';
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Erreur lors de la création du patient :', err);
+      this.confirmationMessage = 'Erreur lors de l’enregistrement du patient.';
+    }
+  });
 }
 
+
 }
+
+

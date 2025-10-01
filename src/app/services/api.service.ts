@@ -20,7 +20,7 @@ export class ApiService {
   }
 
   getSlotsByDoctors(idDoctor: number): Observable<Slot[]>{
-    return this.http.get<Slot[]>(this.baseURL +'/doctors/${idDoctor}/slots');
+    return this.http.get<Slot[]>(this.baseURL +`/doctors/${idDoctor}/slots`);
   }
 
 getSlotsByDoctorsAndPatient(idDoctor: number, idPatient: number): Observable<Slot[]> {
@@ -31,10 +31,29 @@ getDoctorById(idDoctor: number): Observable<Doctor> {
   return this.http.get<Doctor>(this.baseURL +`/doctor/${idDoctor}`);
 }
 
-// postNewSlots(idDoctor: number, idPatient: number) :Observable<Slot[]>{
-//     return this.http.post<Slot>(this.baseURL +`/slot/${idDoctor}/${idPatient}`);
-// }
+
+postNewSlot(slotData: {
+  doctorId: number;
+  patientId: number;
+  slotDate: string;
+  slotTime: string;
+  slotReason: string;
+}): Observable<Slot> {
+  return this.http.post<Slot>(`${this.baseURL}/slot/${slotData.doctorId}/${slotData.patientId}`, slotData);
+}
+
+
+
+postPatient(patientData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+}): Observable<Patient> {
+  return this.http.post<Patient>(`${this.baseURL}/patient`, patientData);
+
 
 
 }
 
+}
