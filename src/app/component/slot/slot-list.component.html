@@ -1,5 +1,5 @@
 @if (selectedDoctor){
-  <h2>Créneaux du docteur {{ selectedDoctor.lastName }}</h2>
+  <h2>Créneaux du docteur {{ selectedDoctor.lastName }} - {{selectedDoctor.speciality}}</h2>
 }
 
 <div class="calendar-container">
@@ -30,16 +30,17 @@
       @for (hour of hours; track hour) {
         <div class="grid-row">
           <!-- Colonne des heures -->
-          <div class="time-cell">{{ hour }}</div>
+          <div class="time-cell" [class.lunch]="isLunchBreak(hour)">{{ hour }}</div>
 
           <!-- Créneaux pour chaque jour à cette heure -->
           @for (day of weekDays; track day) {
             <button
               class="slot-cell"
-              [disabled]="isSlotTaken(day, hour)"
+              [disabled]="isSlotTaken(day, hour) || isLunchBreak(hour)"
               [class.taken]="isSlotTaken(day, hour)"
+              [class.lunch]="isLunchBreak(hour)"
               (click)="openForm(day, hour)">
-              {{ isSlotTaken(day, hour) ? 'Réservé' : 'Libre' }}
+              {{ isLunchBreak(hour) ? '' : (isSlotTaken(day, hour) ? 'Réservé' : 'Libre') }}
             </button>
           }
         </div>

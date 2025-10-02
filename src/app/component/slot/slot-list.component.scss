@@ -60,6 +60,11 @@
   font-weight: 500;
   font-size: 0.85rem;
 }
+ .time-cell.lunch {
+  background-color: #cfcdcd;
+  color: #0c0c0c;
+  cursor: not-allowed;
+  }
 
 .grid-row {
   display: contents;
@@ -88,6 +93,12 @@
     pointer-events: none;
   }
 }
+
+ .slot-cell.lunch {
+  background-color: #cfcdcd;
+  color: #888;
+  cursor: not-allowed;
+  }
 .form-container {
   margin-top: 20px;
   padding: 10px;

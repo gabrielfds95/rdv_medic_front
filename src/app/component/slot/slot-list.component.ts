@@ -93,7 +93,7 @@ export class SlotListComponent implements OnInit {
   // Génère les heures de la journée toutes les 30 minutes entre 8h et 18h
 generateHours(): void {
   const startHour = 8;
-  const endHour = 18;
+  const endHour = 19;
   for (let hour = startHour; hour < endHour; hour++) {
     this.hours.push(`${this.pad(hour)}:00`);
     this.hours.push(`${this.pad(hour)}:30`);
@@ -130,6 +130,11 @@ isSlotTaken(date: Date, time: string): boolean {
     const slotTimeStr = slot.slotTime.slice(0, 5); // '14:30'
     return slotDateStr === dateStr && slotTimeStr === time;
   });
+}
+
+//pour les heures du midi
+isLunchBreak(time: string): boolean {
+  return time === '12:00' || time === '12:30' || time === '13:00';
 }
 
 
@@ -209,12 +214,28 @@ submitForm(event: Event): void {
     next: (createdPatient) => {
       const patientId = createdPatient.id;
 
+
+// Calcule l'heure de fin du créneau en ajoutant 30 minutes à l'heure de début
+let endTime = '';
+
+// Si l'heure se termine par ":00", on ajoute 30 minutes → ex: "14:00" → "14:30"
+if (this.selectedSlot!.hour.endsWith(':00')) {
+  endTime = this.selectedSlot!.hour.replace(':00', ':30');
+} else {
+  // Sinon, l'heure se termine par ":30", donc on passe à l'heure suivante → ex: "14:30" → "15:00"
+  const [h] = this.selectedSlot!.hour.split(':').map(Number);
+  endTime = `${(h + 1).toString().padStart(2, '0')}:00`;
+}
+
+
+
       // Création de l'objet slotData 
       const slotData = {
         doctorId: this.doctorId,
         patientId: patientId,
         slotDate: this.selectedSlot!.day.toISOString().split('T')[0], // format 'YYYY-MM-DD'
         slotTime: this.selectedSlot!.hour, // format 'HH:mm'
+        endTime: endTime,
         slotReason: this.formData.slotReason
       };
 
